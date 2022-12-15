@@ -7,7 +7,7 @@ const AUTH = 'Basic dGVzdHVzZXJAYmxhY2twZWFyLmNvbTphcmVxdWVzdA==';
 const BASE_URL =
   'https://59ae2c9240f849f6ac.develop.eu-west-2.quickfhir.cloud/FHIR/Patient';
 
-const patientResponseNhsNumber = async () => {
+const patientResponse = async () => {
   const response = await fetch(
     `${BASE_URL}?identifier=https://fhir.nhs.uk/Id/nhs-number%7C9449306532`,
     {
@@ -18,7 +18,7 @@ const patientResponseNhsNumber = async () => {
       },
     }
   ).then((response) => response.json());
-  console.log(response);
+  return response;
 };
 
-export default patientResponseNhsNumber;
+export default patientResponse;
