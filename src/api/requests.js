@@ -21,4 +21,4 @@ const patientResponseNhsNumber = async () => {
   console.log(response);
 };
 
-patientResponseNhsNumber();
+export default patientResponseNhsNumber;
