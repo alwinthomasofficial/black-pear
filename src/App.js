@@ -34,8 +34,13 @@ const App = () => {
         sx={{ ml: 1 }}
         onClick={() => setLight((prev) => !prev)}
         color="inherit"
+        aria-label="Dark/Light Mode Toggle"
       >
-        {light === true ? <ToggleOnIcon /> : <ToggleOffIcon />}
+        {light === true ? (
+          <ToggleOnIcon sx={{ height: 40, width: 40 }} />
+        ) : (
+          <ToggleOffIcon sx={{ height: 40, width: 40 }} />
+        )}
       </IconButton>
       <LandingPage />;
     </ThemeProvider>

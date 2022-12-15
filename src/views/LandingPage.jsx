@@ -3,27 +3,38 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import { createTheme } from '@mui/material/styles';
 import { styled } from '@mui/system';
 import patientResponse from '../api/requests';
-import { UPDATE_FORM, onInputChange } from '../utils/formUtils';
+import {
+  UPDATE_FORM,
+  onInputChange,
+  onInputFocusChange,
+} from '../utils/formUtils';
 
 const initialState = {
-  dateOfBirth: { value: '', selected: false, hasError: true, errorText: '' },
-  nhsNumber: { value: '', selected: false, hasError: true, errorText: '' },
-  givenName: { value: '', selected: false, hasError: true, errorText: '' },
-  familyName: { value: '', selected: false, hasError: true, errorText: '' },
+  dateOfBirth: {
+    value: '',
+    wasSelected: false,
+    hasError: false,
+    errorText: '',
+  },
+  nhsNumber: { value: '', wasSelected: false, hasError: false, errorText: '' },
+  givenName: { value: '', wasSelected: false, hasError: false, errorText: '' },
+  familyName: { value: '', wasSelected: false, hasError: false, errorText: '' },
   isFormValid: false,
 };
 
 const formsReducer = (state, action) => {
   switch (action.type) {
     case UPDATE_FORM:
-      const { name, value, hasError, error, selected, isFormValid } =
+      const { name, value, hasError, errorText, wasSelected, isFormValid } =
         action.data;
       return {
         ...state,
         // updates the value of the corresponding input field using the name as the key
-        [name]: { ...state[name], value, hasError, error, selected },
+        [name]: { ...state[name], value, hasError, errorText, wasSelected },
         isFormValid,
       };
     default:
@@ -37,19 +48,33 @@ const handleSubmit = (e) => {
 };
 
 const LandingPage = () => {
+  const theme = createTheme();
   // formState returns the current state of the form
   const [formState, dispatch] = useReducer(formsReducer, initialState);
+
+  console.table({ 'givenName state': formState.givenName });
 
   return (
     <Box
       display="flex"
       flexDirection="column"
       alignItems="center"
-      justifyContent="center"
+      justifyContent="start"
       sx={{
+        minWidth: '100vw',
         minHeight: '100vh',
       }}
     >
+      <Typography
+        variant="h3"
+        component="h1"
+        gutterBottom
+        sx={{
+          margin: theme.spacing(5, 0, 3, 0),
+        }}
+      >
+        Patient Info
+      </Typography>
       <form>
         <Grid
           container
@@ -60,7 +85,7 @@ const LandingPage = () => {
         >
           <Grid item xs={12} sm={9}>
             <TextField
-              id="outlined-basic"
+              id="givenNameInput"
               label="Given Name"
               name="givenName"
               variant="outlined"
@@ -68,11 +93,25 @@ const LandingPage = () => {
               onChange={(e) => {
                 onInputChange('givenName', e.target.value, dispatch, formState);
               }}
+              onBlur={(e) => {
+                onInputFocusChange(
+                  'givenName',
+                  e.target.value,
+                  dispatch,
+                  formState
+                );
+              }}
+              error={formState.givenName.hasError}
+              helperText={
+                formState.givenName.hasError
+                  ? formState.givenName.errorText
+                  : ''
+              }
             />
           </Grid>
           <Grid item xs={12} sm={9}>
             <TextField
-              id="outlined-basic"
+              id="familyNameInput"
               label="Family Name"
               name="familyName"
               variant="outlined"
@@ -85,11 +124,25 @@ const LandingPage = () => {
                   formState
                 );
               }}
+              onBlur={(e) => {
+                onInputFocusChange(
+                  'familyName',
+                  e.target.value,
+                  dispatch,
+                  formState
+                );
+              }}
+              error={formState.familyName.hasError}
+              helperText={
+                formState.familyName.hasError
+                  ? formState.familyName.errorText
+                  : ''
+              }
             />
           </Grid>
           <Grid item xs={12} sm={9}>
             <TextField
-              id="outlined-basic"
+              id="dateOfBirthInput"
               label="Date Of Birth"
               name="dateOfBirth"
               variant="outlined"
@@ -102,11 +155,25 @@ const LandingPage = () => {
                   formState
                 );
               }}
+              onBlur={(e) => {
+                onInputFocusChange(
+                  'dateOfBirth',
+                  e.target.value,
+                  dispatch,
+                  formState
+                );
+              }}
+              error={formState.dateOfBirth.hasError}
+              helperText={
+                formState.dateOfBirth.hasError
+                  ? formState.dateOfBirth.errorText
+                  : ''
+              }
             />
           </Grid>
           <Grid item xs={12} sm={9}>
             <TextField
-              id="outlined-basic"
+              id="nhsNumberInput"
               label="NHS Number"
               name="nhsNumber"
               variant="outlined"
@@ -114,6 +181,20 @@ const LandingPage = () => {
               onChange={(e) => {
                 onInputChange('nhsNumber', e.target.value, dispatch, formState);
               }}
+              onBlur={(e) => {
+                onInputFocusChange(
+                  'nhsNumber',
+                  e.target.value,
+                  dispatch,
+                  formState
+                );
+              }}
+              error={formState.nhsNumber.hasError}
+              helperText={
+                formState.nhsNumber.hasError
+                  ? formState.nhsNumber.errorText
+                  : ''
+              }
             />
           </Grid>
           <Grid item xs={12} sm={9}>

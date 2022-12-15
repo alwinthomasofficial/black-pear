@@ -1,30 +1,110 @@
-export const UPDATE_FORM = 'UPDATE_FORM';
+const UPDATE_FORM = 'UPDATE_FORM';
+
+// const checkDateOfBirthFormat = (dateOfBirth) => {
+//   // "22-03-1981" will pass
+//   const dateOfBirthRegex = /^\d{2}[-]\d{2}[-]\d{4}$/;
+//   return dateOfBirthRegex.test(dateOfBirth);
+// };
+
+// const checkForInvalidCharacters = (value) => {
+//   let hasError = false,
+//     errorText = '';
+//   // Check for invalid characters
+//   const invalidCharactersRegex = !/^[a-zA-Z ]*$/;
+//   if (!invalidCharactersRegex.test(value)) {
+//     hasError = true;
+//     errorText = 'Invalid Input. Avoid Special characters';
+//   } else {
+//     hasError = false;
+//     errorText = '';
+//   }
+//   return { hasError, errorText };
+// };
+
+const checkForErrorsInForm = (formState, name, hasError) => {
+  let isFormValid = true;
+  for (const key in formState) {
+    const item = formState[key];
+    // Check if the current field has error
+    if (key === name && hasError) {
+      isFormValid = false;
+      break;
+    } else if (key !== name && item.hasError) {
+      // Check if any other field has error
+      isFormValid = false;
+      break;
+    }
+  }
+  return isFormValid;
+};
 
 /**
  * Triggered every time the value of the form changes
  */
-export const onInputChange = (name, value, dispatch, formState) => {
+const onInputChange = (name, value, dispatch, formState) => {
+  const { hasError, errorText } = validateInput(name, value);
+  const isFormValid = checkForErrorsInForm(formState, name, hasError);
   dispatch({
     type: UPDATE_FORM,
     data: {
       name,
       value,
-      hasError: false,
-      error: '',
-      touched: false,
-      isFormValid: true,
+      hasError,
+      errorText,
+      wasSelected: false,
+      isFormValid,
     },
   });
 };
 
-export const validateInput = (name, value) => {
+/**
+ * Shows error only if user has finished typing and moves onto next field
+ */
+const onInputFocusChange = (name, value, dispatch, formState) => {
+  const { hasError, errorText } = validateInput(name, value);
+  const isFormValid = checkForErrorsInForm(formState, name, hasError);
+
+  dispatch({
+    type: UPDATE_FORM,
+    data: { name, value, hasError, errorText, wasSelected: true, isFormValid },
+  });
+};
+
+const validateInput = (name, value) => {
   let hasError = false,
     errorText = '';
   switch (name) {
-    case 'name':
-      if (!/^[a-zA-Z ]+$/.test(value)) {
+    case 'givenName':
+      if (value.trim() !== '' && !/^[a-zA-Z ]+$/.test(value)) {
         hasError = true;
-        errorText = 'Invalid Input. Avoid Special characters';
+        errorText = 'Invalid Name. Avoid Special characters';
+      } else {
+        hasError = false;
+        errorText = '';
+      }
+      break;
+    case 'familyName':
+      if (value.trim() !== '' && !/^[a-zA-Z ]+$/.test(value)) {
+        hasError = true;
+        errorText = 'Invalid Name. Avoid Special characters';
+      } else {
+        hasError = false;
+        errorText = '';
+      }
+      break;
+    case 'dateOfBirth':
+      if (value.trim() !== '' && !/^\d{2}[-]\d{2}[-]\d{4}$/.test(value)) {
+        hasError = true;
+        errorText = 'Please enter in the format of DD-MM-YYYY';
+      } else {
+        hasError = false;
+        errorText = '';
+      }
+      break;
+    case 'nhsNumber':
+      if (value.trim() !== '' && !/^[0-9]{10}$/.test(value)) {
+        hasError = true;
+        errorText = 'Please enter 10 numerical digits';
       } else {
         hasError = false;
         errorText = '';
@@ -35,3 +115,5 @@ export const validateInput = (name, value) => {
   }
   return { hasError, errorText };
 };
+
+export { onInputChange, validateInput, onInputFocusChange, UPDATE_FORM };
