@@ -93,9 +93,9 @@ const validateInput = (name, value) => {
       }
       break;
     case 'dateOfBirth':
-      if (value.trim() !== '' && !/^\d{2}[-]\d{2}[-]\d{4}$/.test(value)) {
+      if (value.trim() !== '' && !/^\d{4}[-]\d{2}[-]\d{2}$/.test(value)) {
         hasError = true;
-        errorText = 'Please enter in the format of DD-MM-YYYY';
+        errorText = 'Please enter in the format of YYYY-MM-DD';
       } else {
         hasError = false;
         errorText = '';
