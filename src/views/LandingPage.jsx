@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useState } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
@@ -11,9 +11,12 @@ import {
   UPDATE_FORM,
   onInputChange,
   onInputFocusChange,
+  validateInput,
 } from '../utils/formUtils';
 
 const initialState = {
+  givenName: { value: '', wasSelected: false, hasError: false, errorText: '' },
+  familyName: { value: '', wasSelected: false, hasError: false, errorText: '' },
   dateOfBirth: {
     value: '',
     wasSelected: false,
@@ -21,8 +24,6 @@ const initialState = {
     errorText: '',
   },
   nhsNumber: { value: '', wasSelected: false, hasError: false, errorText: '' },
-  givenName: { value: '', wasSelected: false, hasError: false, errorText: '' },
-  familyName: { value: '', wasSelected: false, hasError: false, errorText: '' },
   isFormValid: false,
 };
 
@@ -52,7 +53,75 @@ const LandingPage = () => {
   // formState returns the current state of the form
   const [formState, dispatch] = useReducer(formsReducer, initialState);
 
-  console.table({ 'givenName state': formState.givenName });
+  const [formError, setFormError] = useState(false);
+
+  const formSubmitHandler = (e) => {
+    const userInputs = [];
+    e.preventDefault(); //prevents the form from submitting
+
+    let isFormValid = true;
+
+    console.log('userInputs here:', userInputs);
+
+    for (const name in formState) {
+      // console.log('name here:', name);
+      // console.log('fiorState here:', formState);
+      const item = formState[name];
+      userInputs.push({ formField: name, formValue: item.value });
+      console.log('userInputs here:', userInputs);
+      const { value } = item;
+      console.log('value here:', value);
+      const { hasError, errorText } = validateInput(name, value);
+      if (hasError) {
+        isFormValid = false;
+      }
+      if (name) {
+        dispatch({
+          type: UPDATE_FORM,
+          data: {
+            name,
+            value,
+            hasError,
+            errorText,
+            wasSelected: true,
+            isFormValid,
+          },
+        });
+      }
+    }
+    let atleastOneField = userInputs.some(
+      (obj) => typeof obj.formValue === 'string' && obj.formValue !== ''
+    );
+
+    console.log('atleastOneField:', atleastOneField);
+    if (!isFormValid) {
+      setFormError(true);
+    } else if (!atleastOneField) {
+      setFormError(true);
+    } else {
+      // const objIndex = userInputs.findIndex(
+      //   (obj) => obj.formField === 'isFormValid'
+      // );
+      // userInputs[objIndex].formValue = isFormValid;
+      // console.log('userInputs hefinalre:', userInputs[objIndex]);
+
+      const inputFields = userInputs.filter(
+        (obj) => typeof obj.formValue === 'string'
+      );
+      // console.log('inputFields:', inputFields);
+      const response = patientResponse(inputFields);
+      response.then(function (result) {
+        console.log(result);
+      });
+    }
+
+    // Hide the error message after 5 seconds
+    setTimeout(() => {
+      setFormError(false);
+    }, 5000);
+  };
+
+  // console.table({ 'givenName state': formState.givenName });
 
   return (
     <Box
@@ -73,7 +142,7 @@ const LandingPage = () => {
           margin: theme.spacing(5, 0, 3, 0),
         }}
       >
-        Patient Info
+        Patient Search
       </Typography>
       <form>
         <Grid
@@ -202,7 +271,7 @@ const LandingPage = () => {
               variant="contained"
               onClick={(e) => {
                 console.log(formState);
-                handleSubmit(e);
+                formSubmitHandler(e);
               }}
             >
               Submit
