@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import './App.css';
 import CssBaseline from '@mui/material/CssBaseline';
 import GlobalStyles from '@mui/material/GlobalStyles';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import LandingPage from './views/LandingPage';
+import ResultsPage from './views/ResultsPage';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
-
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 const themeLight = createTheme({
   palette: {
     background: {
@@ -42,7 +43,12 @@ const App = () => {
           <ToggleOffIcon sx={{ height: 40, width: 40 }} />
         )}
       </IconButton>
-      <LandingPage />;
+      <Router>
+        <Routes>
+          <Route exact path="/" element={<LandingPage />} />
+          <Route path="/results" element={<ResultsPage />} />
+        </Routes>
+      </Router>
     </ThemeProvider>
   );
 };

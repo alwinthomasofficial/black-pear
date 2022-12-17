@@ -4,9 +4,11 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
 import { createTheme } from '@mui/material/styles';
 import { styled } from '@mui/system';
 import patientResponse from '../api/requests';
+import { useNavigate } from 'react-router-dom';
 import {
   UPDATE_FORM,
   onInputChange,
@@ -57,61 +59,67 @@ const LandingPage = () => {
 
   const [loading, setLoading] = useState(false);
 
+  const navigate = useNavigate();
+
+  const userInputs = [];
+
   const formSubmitHandler = (e) => {
-    e.preventDefault(); //prevents the form from submitting
-    const userInputs = [];
+    try {
+      e.preventDefault();
+      setLoading(true);
 
-    let isFormValid = true;
+      let isFormValid = true;
 
-    console.log('userInputs here:', userInputs);
-
-    for (const name in formState) {
-      const item = formState[name];
-      userInputs.push({ formField: name, formValue: item.value });
       console.log('userInputs here:', userInputs);
-      const { value } = item;
-      console.log('value here:', value);
-      const { hasError, errorText } = validateInput(name, value);
-      if (hasError) {
-        isFormValid = false;
+
+      for (const name in formState) {
+        const item = formState[name];
+        userInputs.push({ formField: name, formValue: item.value });
+        console.log('userInputs here:', userInputs);
+        const { value } = item;
+        console.log('value here:', value);
+        const { hasError, errorText } = validateInput(name, value);
+        if (hasError) {
+          isFormValid = false;
+        }
+        if (name) {
+          dispatch({
+            type: UPDATE_FORM,
+            data: {
+              name,
+              value,
+              hasError,
+              errorText,
+              wasSelected: true,
+              isFormValid,
+            },
+          });
+        }
       }
-      if (name) {
-        dispatch({
-          type: UPDATE_FORM,
-          data: {
-            name,
-            value,
-            hasError,
-            errorText,
-            wasSelected: true,
-            isFormValid,
-          },
+      let atleastOneField = userInputs.some(
+        (obj) => typeof obj.formValue === 'string' && obj.formValue !== ''
+      );
+
+      if (!isFormValid) {
+        setFormError(true);
+      } else if (!atleastOneField) {
+        setFormError(true);
+      } else {
+        const inputFields = userInputs.filter(
+          (obj) => typeof obj.formValue === 'string'
+        );
+        const response = patientResponse(inputFields);
+        response.then(function (result) {
+          console.log('result here:', result);
+          setLoading(false);
+          if (result.entry.length > 0) {
+            navigate('/results', { state: result.entry });
+          }
         });
       }
+    } catch (error) {
+      console.log('error here:', error);
     }
-    let atleastOneField = userInputs.some(
-      (obj) => typeof obj.formValue === 'string' && obj.formValue !== ''
-    );
-
-    if (!isFormValid) {
-      setFormError(true);
-    } else if (!atleastOneField) {
-      setFormError(true);
-    } else {
-      const inputFields = userInputs.filter(
-        (obj) => typeof obj.formValue === 'string'
-      );
-      const response = patientResponse(inputFields);
-      response.then(function (result) {
-        setLoading(false);
-        console.log(result);
-      });
-    }
-
-    // Hide the error message after 5 seconds
-    setTimeout(() => {
-      setFormError(false);
-    }, 5000);
   };
 
   return (
@@ -125,6 +133,7 @@ const LandingPage = () => {
         minHeight: '100vh',
       }}
     >
+      {loading && <CircularProgress />}
       <Typography
         variant="h3"
         component="h1"
@@ -261,11 +270,9 @@ const LandingPage = () => {
             <Button
               variant="contained"
               onClick={(e) => {
-                setLoading(true);
-                console.log(formState);
                 formSubmitHandler(e);
               }}
-              disabled={loading}
+              disabled={loading || !formState.isFormValid}
             >
               Submit
             </Button>
