@@ -55,17 +55,17 @@ const LandingPage = () => {
 
   const [formError, setFormError] = useState(false);
 
+  const [loading, setLoading] = useState(false);
+
   const formSubmitHandler = (e) => {
-    const userInputs = [];
     e.preventDefault(); //prevents the form from submitting
+    const userInputs = [];
 
     let isFormValid = true;
 
     console.log('userInputs here:', userInputs);
 
     for (const name in formState) {
-      // console.log('name here:', name);
-      // console.log('fiorState here:', formState);
       const item = formState[name];
       userInputs.push({ formField: name, formValue: item.value });
       console.log('userInputs here:', userInputs);
@@ -93,24 +93,17 @@ const LandingPage = () => {
       (obj) => typeof obj.formValue === 'string' && obj.formValue !== ''
     );
 
-    console.log('atleastOneField:', atleastOneField);
     if (!isFormValid) {
       setFormError(true);
     } else if (!atleastOneField) {
       setFormError(true);
     } else {
-      // const objIndex = userInputs.findIndex(
-      //   (obj) => obj.formField === 'isFormValid'
-      // );
-      // userInputs[objIndex].formValue = isFormValid;
-      // console.log('userInputs hefinalre:', userInputs[objIndex]);
-
       const inputFields = userInputs.filter(
         (obj) => typeof obj.formValue === 'string'
       );
-      // console.log('inputFields:', inputFields);
       const response = patientResponse(inputFields);
       response.then(function (result) {
+        setLoading(false);
         console.log(result);
       });
     }
@@ -120,8 +113,6 @@ const LandingPage = () => {
       setFormError(false);
     }, 5000);
   };
-
-  // console.table({ 'givenName state': formState.givenName });
 
   return (
     <Box
@@ -270,9 +261,11 @@ const LandingPage = () => {
             <Button
               variant="contained"
               onClick={(e) => {
+                setLoading(true);
                 console.log(formState);
                 formSubmitHandler(e);
               }}
+              disabled={loading}
             >
               Submit
             </Button>
