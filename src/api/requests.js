@@ -24,7 +24,7 @@ const patientResponse = async (inputFields) => {
         case 'nhsNumber':
           urlParams.push({
             formField: 'identifier',
-            formValue: `https://fhir.nhs.uk/Id/nhs-number${e.formValue}`,
+            formValue: `https://fhir.nhs.uk/Id/nhs-number|${e.formValue}`,
           });
           break;
         default:
@@ -39,6 +39,7 @@ const patientResponse = async (inputFields) => {
 
   const finalUrl = `${BASE_URL}${params.toString()}`;
   console.log('finalUrl:', finalUrl);
+
   const response = await fetch(finalUrl, {
     method: 'GET',
     headers: {
