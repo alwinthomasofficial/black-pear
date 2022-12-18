@@ -13,10 +13,10 @@ module.exports = {
   },
   extends: [
     'plugin:react/recommended',
-    // 'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
   ],
-  plugins: ['react', 'prettier'],
+  plugins: ['react', '@typescript-eslint', 'prettier'],
   rules: {
     'linebreak-style': 0,
     'no-console': 0,

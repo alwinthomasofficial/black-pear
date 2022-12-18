@@ -99,6 +99,7 @@ const LandingPage = () => {
       let atleastOneField = userInputs.some(
         (obj) => typeof obj.formValue === 'string' && obj.formValue !== ''
       );
+      console.log('atleastOneField here:', atleastOneField);
 
       if (!isFormValid) {
         setFormError(true);
