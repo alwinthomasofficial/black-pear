@@ -30,10 +30,18 @@ const ResultsList = ({ resultsData }: ResultsListProps): JSX.Element => {
   const patientDetails = (dob: string, nhsNumber: string) => {
     return (
       <>
-        <Typography display="block" component="span">
+        <Typography
+          display="block"
+          component="span"
+          sx={{ fontWeight: 'bold' }}
+        >
           {`Date of Birth: ${dob}`}
         </Typography>
-        <Typography display="block" component="span">
+        <Typography
+          display="block"
+          component="span"
+          sx={{ fontWeight: 'bold' }}
+        >
           {`NHS Number: ${nhsNumber}`}
         </Typography>
       </>
@@ -63,7 +71,11 @@ const ResultsList = ({ resultsData }: ResultsListProps): JSX.Element => {
                 </ListItemIcon>
 
                 <ListItemText
-                  primary={value.name}
+                  primary={
+                    <Typography sx={{ fontWeight: 'bold' }}>
+                      {value.name}
+                    </Typography>
+                  }
                   secondary={patientDetails(value.dateOfBirth, value.nhsNumber)}
                 />
               </ListItemButton>

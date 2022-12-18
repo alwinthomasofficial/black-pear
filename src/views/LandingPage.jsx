@@ -5,6 +5,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Backdrop from '@mui/material/Backdrop';
+import { styled } from '@mui/system';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import { createTheme } from '@mui/material/styles';
@@ -131,33 +132,13 @@ const LandingPage = () => {
   };
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="start"
-      sx={{
-        minWidth: '100vw',
-        minHeight: '100vh',
-      }}
-    >
+    <>
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={loading}
       >
         <CircularProgress size={80} thickness={4} />
       </Backdrop>
-      <Typography
-        variant="h3"
-        component="h1"
-        gutterBottom
-        sx={{
-          margin: theme.spacing(5, 0, 3, 0),
-        }}
-      >
-        Patient Search
-      </Typography>
-
       <form>
         <Grid
           container
@@ -165,15 +146,32 @@ const LandingPage = () => {
           justifyContent="center"
           alignItems="center"
           spacing={3}
+          sx={{
+            minWidth: '100vw',
+          }}
         >
-          <Alert
-            severity={responseFailure ? 'error' : 'info'}
-            sx={{ margin: theme.spacing(1, 1.5, 0, 5) }}
-          >
-            {responseFailure
-              ? 'The search returned no results please try again'
-              : 'Please fill out at least one or more fields'}
-          </Alert>
+          <Grid item xs={12} sm={9}>
+            <Typography
+              variant="h3"
+              component="h1"
+              gutterBottom
+              sx={{
+                margin: theme.spacing(5, 0, 3, 0),
+              }}
+            >
+              Patient Search
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Alert
+              severity={responseFailure ? 'error' : 'info'}
+              sx={{ margin: theme.spacing(-2, 5, 0, 5) }}
+            >
+              {responseFailure
+                ? 'The search returned no results, please try again'
+                : 'Please fill out one or more fields'}
+            </Alert>
+          </Grid>
           <Grid item xs={12} sm={9}>
             <TextField
               id="givenNameInput"
@@ -299,7 +297,7 @@ const LandingPage = () => {
           </Grid>
         </Grid>
       </form>
-    </Box>
+    </>
   );
 };
 
