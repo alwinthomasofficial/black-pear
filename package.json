@@ -47,8 +47,12 @@
     ]
   },
   "devDependencies": {
+    "buffer": "npm:buffer@6.0.3",
+    "crypto": "npm:crypto-browserify@3.12.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "prettier": "^2.8.1"
+    "prettier": "^2.8.1",
+    "stream": "npm:stream-browserify@3.0.0",
+    "util": "npm:util@0.12.5"
   }
 }
