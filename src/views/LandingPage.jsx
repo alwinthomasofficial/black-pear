@@ -8,7 +8,6 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import { createTheme } from '@mui/material/styles';
-import { styled } from '@mui/system';
 import patientResponse from '../api/requests';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -46,11 +45,6 @@ const formsReducer = (state, action) => {
     default:
       return state;
   }
-};
-
-const handleSubmit = (e) => {
-  e.preventDefault();
-  // patientResponse();
 };
 
 const LandingPage = () => {
