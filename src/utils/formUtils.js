@@ -1,25 +1,13 @@
 const UPDATE_FORM = 'UPDATE_FORM';
 
-// const checkDateOfBirthFormat = (dateOfBirth) => {
-//   // "22-03-1981" will pass
-//   const dateOfBirthRegex = /^\d{2}[-]\d{2}[-]\d{4}$/;
-//   return dateOfBirthRegex.test(dateOfBirth);
-// };
-
-// const checkForInvalidCharacters = (value) => {
-//   let hasError = false,
-//     errorText = '';
-//   // Check for invalid characters
-//   const invalidCharactersRegex = !/^[a-zA-Z ]*$/;
-//   if (!invalidCharactersRegex.test(value)) {
-//     hasError = true;
-//     errorText = 'Invalid Input. Avoid Special characters';
-//   } else {
-//     hasError = false;
-//     errorText = '';
-//   }
-//   return { hasError, errorText };
-// };
+const returnFieldInputArray = (formState) => {
+  const fieldInputArray = [];
+  for (const name in formState) {
+    const item = formState[name];
+    fieldInputArray.push({ formField: name, formValue: item.value });
+  }
+  return fieldInputArray;
+};
 
 const checkForErrorsInForm = (formState, name, hasError) => {
   let isFormValid = true;
@@ -116,4 +104,10 @@ const validateInput = (name, value) => {
   return { hasError, errorText };
 };
 
-export { onInputChange, validateInput, onInputFocusChange, UPDATE_FORM };
+export {
+  onInputChange,
+  validateInput,
+  onInputFocusChange,
+  returnFieldInputArray,
+  UPDATE_FORM,
+};

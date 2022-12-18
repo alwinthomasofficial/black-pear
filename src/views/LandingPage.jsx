@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from 'react';
+import React, { useReducer, useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
 import { createTheme } from '@mui/material/styles';
 import { styled } from '@mui/system';
 import patientResponse from '../api/requests';
@@ -15,6 +16,7 @@ import {
   onInputChange,
   onInputFocusChange,
   validateInput,
+  returnFieldInputArray,
 } from '../utils/formUtils';
 
 const initialState = {
@@ -57,8 +59,19 @@ const LandingPage = () => {
   const [formState, dispatch] = useReducer(formsReducer, initialState);
 
   const [formError, setFormError] = useState(false);
+  const [responseFailure, setResponseFailure] = useState(false);
 
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const formFields = returnFieldInputArray(formState);
+    let formInvalid = formFields.some(
+      (obj) => typeof obj.formValue === 'string' && obj.formValue !== ''
+    );
+    if (formInvalid) {
+      setFormError(true);
+    }
+  }, [formState]);
 
   const navigate = useNavigate();
 
@@ -78,14 +91,10 @@ const LandingPage = () => {
 
       let isFormValid = true;
 
-      console.log('userInputs here:', userInputs);
-
       for (const name in formState) {
         const item = formState[name];
         userInputs.push({ formField: name, formValue: item.value });
-        console.log('userInputs here:', userInputs);
         const { value } = item;
-        console.log('value here:', value);
         const { hasError, errorText } = validateInput(name, value);
         if (hasError) {
           isFormValid = false;
@@ -104,14 +113,8 @@ const LandingPage = () => {
           });
         }
       }
-      let atleastOneField = userInputs.some(
-        (obj) => typeof obj.formValue === 'string' && obj.formValue !== ''
-      );
-      console.log('atleastOneField here:', atleastOneField);
 
       if (!isFormValid) {
-        setFormError(true);
-      } else if (!atleastOneField) {
         setFormError(true);
       } else {
         const inputFields = userInputs.filter(
@@ -119,10 +122,11 @@ const LandingPage = () => {
         );
         const response = patientResponse(inputFields);
         response.then(function (result) {
-          console.log('result here:', result);
           handleClose();
           if (result.entry.length > 0) {
             navigate('/results', { state: result.entry });
+          } else {
+            setResponseFailure(true);
           }
         });
       }
@@ -159,6 +163,7 @@ const LandingPage = () => {
       >
         Patient Search
       </Typography>
+
       <form>
         <Grid
           container
@@ -167,6 +172,14 @@ const LandingPage = () => {
           alignItems="center"
           spacing={3}
         >
+          <Alert
+            severity={responseFailure ? 'error' : 'info'}
+            sx={{ margin: theme.spacing(1, 1.5, 0, 5) }}
+          >
+            {responseFailure
+              ? 'The search returned no results please try again'
+              : 'Please fill out at least one or more fields'}
+          </Alert>
           <Grid item xs={12} sm={9}>
             <TextField
               id="givenNameInput"
@@ -285,7 +298,7 @@ const LandingPage = () => {
             <Button
               variant="contained"
               onClick={(e) => formSubmitHandler(e)}
-              disabled={loading || !formState.isFormValid}
+              disabled={loading || !formError}
             >
               Submit
             </Button>

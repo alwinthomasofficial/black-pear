@@ -17,8 +17,6 @@ const StyledButton = styled(Button)({
 
 const ResultsPage = () => {
   const location = useLocation();
-  console.log('Test 1');
-  console.log('data here', location.state);
   const results = location.state;
 
   const tableData = [];

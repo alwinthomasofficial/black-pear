@@ -32,13 +32,10 @@ const patientResponse = async (inputFields) => {
       }
     }
   });
-  console.log('urlParams:', urlParams);
   const params = new URLSearchParams();
   urlParams.forEach((e) => params.append(e.formField, e.formValue));
-  console.log('params:', params.toString());
 
   const finalUrl = `${BASE_URL}${params.toString()}`;
-  console.log('finalUrl:', finalUrl);
 
   const response = await fetch(finalUrl, {
     method: 'GET',
