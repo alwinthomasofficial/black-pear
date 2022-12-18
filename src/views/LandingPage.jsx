@@ -4,6 +4,7 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { createTheme } from '@mui/material/styles';
 import { styled } from '@mui/system';
@@ -63,10 +64,17 @@ const LandingPage = () => {
 
   const userInputs = [];
 
+  const handleClose = () => {
+    setLoading(false);
+  };
+  const handleToggle = () => {
+    setLoading(true);
+  };
+
   const formSubmitHandler = (e) => {
     try {
       e.preventDefault();
-      setLoading(true);
+      handleToggle();
 
       let isFormValid = true;
 
@@ -112,13 +120,14 @@ const LandingPage = () => {
         const response = patientResponse(inputFields);
         response.then(function (result) {
           console.log('result here:', result);
-          setLoading(false);
+          handleClose();
           if (result.entry.length > 0) {
             navigate('/results', { state: result.entry });
           }
         });
       }
     } catch (error) {
+      handleClose();
       console.log('error here:', error);
     }
   };
@@ -134,7 +143,12 @@ const LandingPage = () => {
         minHeight: '100vh',
       }}
     >
-      {loading && <CircularProgress />}
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress size={80} thickness={4} />
+      </Backdrop>
       <Typography
         variant="h3"
         component="h1"
@@ -270,9 +284,7 @@ const LandingPage = () => {
           <Grid item xs={12} sm={9}>
             <Button
               variant="contained"
-              onClick={(e) => {
-                formSubmitHandler(e);
-              }}
+              onClick={(e) => formSubmitHandler(e)}
               disabled={loading || !formState.isFormValid}
             >
               Submit

@@ -31,11 +31,7 @@ const ResultsPage = () => {
       nhsNumber: resource.identifier[0].value,
     });
   });
-  console.log('tableData here:', tableData);
 
-  //   location.state &&
-  //     location.state.data &&
-  //     console.log('Route data', location.state.data);
   return (
     <>
       <Grid container flexDirection="column">
